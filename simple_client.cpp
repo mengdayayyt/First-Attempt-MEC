@@ -40,6 +40,7 @@ int main() {
     
     //4. 关闭套接字close socket
     close(_sock);
+    printf("close\n");
     
     return 0;
 }

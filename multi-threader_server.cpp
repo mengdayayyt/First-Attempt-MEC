@@ -9,6 +9,8 @@
 
 // 函数用于处理客户端连接
 void *handleClient(void *arg) {
+    printf("one handle start\n");
+
     int clientSocket = *((int *)arg);
     char msgBuf[] = "Hello, I'm server!";
     
@@ -17,6 +19,7 @@ void *handleClient(void *arg) {
     
     // 关闭客户端套接字
     close(clientSocket);
+    printf("one handle over\n");
     
     return NULL;
 }
@@ -34,12 +37,12 @@ int main() {
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     
     if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
-        perror("bind error!");
+        perror("bind error!\n");
         return 1;
     }
     
-    if (listen(serverSocket, 5) == -1) {
-        perror("listen error!");
+    if (listen(serverSocket, 10) == -1) {
+        perror("listen error!\n");
         return 1;
     }
     
@@ -49,14 +52,14 @@ int main() {
     while (1) {
         int clientSocket = accept(serverSocket, (struct sockaddr *)&clientAddr, &clientAddrLen);
         if (clientSocket == -1) {
-            perror("accept error!");
+            perror("accept error!\n");
         } else {
             printf("New client connected from %s\n", inet_ntoa(clientAddr.sin_addr));
             
             // 创建一个线程来处理客户端连接
             pthread_t tid;
             if (pthread_create(&tid, NULL, handleClient, &clientSocket) != 0) {
-                perror("pthread_create error!");
+                perror("pthread_create error!\n");
             }
             
             // 分离线程，线程结束后自动释放资源
@@ -65,6 +68,8 @@ int main() {
     }
     
     close(serverSocket);
+
+    printf("all over\n");
     
     return 0;
 }
